@@ -2,7 +2,8 @@
 
 name: Build
 on: [push]
-
+permissions:
+  contents: write
 jobs:
   build:
     env:
@@ -68,55 +69,41 @@ jobs:
       - name: Upload Release Asset Linux Amd64
         if: contains(github.ref, 'v')
         uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: mesh_helper_linux_amd64.zip
 
       - name: Upload Release Asset Linux Arm6
         if: contains(github.ref, 'v')
         uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: mesh_helper_linux_arm6.zip
 
       - name: Upload Release Asset Linux Arm7
         if: contains(github.ref, 'v')
         uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: mesh_helper_linux_arm7.zip
       
       - name: Upload Release Asset Linux Arm64
         if: contains(github.ref, 'v')
         uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: mesh_helper_linux_arm64.zip
 
       - name: Upload Release Asset Darwin Amd64
         if: contains(github.ref, 'v')
         uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: mesh_helper_darwin_amd64.zip
 
       - name: Upload Release Asset Darwin Arm64
         if: contains(github.ref, 'v')
         uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: mesh_helper_darwin_arm64.zip
 
       - name: Upload Release Asset Windows Amd64
         if: contains(github.ref, 'v')
         uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: mesh_helper_windows_amd64.zip
