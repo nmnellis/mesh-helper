@@ -1,0 +1,272 @@
+[
+  {
+    "metric": {
+      "__name__": "istio_tcp_sent_bytes_total",
+      "app": "gloo-telemetry-collector-agent",
+      "cluster": "ambient",
+      "collector_pod": "gloo-telemetry-collector-agent-g5hmp",
+      "component": "agent-collector",
+      "connection_security_policy": "mutual_tls",
+      "controller_revision_hash": "dbd589d5f",
+      "destination_cluster": "ambient",
+      "destination_principal": "spiffe://cluster.local/ns/ns-1/sa/bold-dream",
+      "destination_service": "bold-dream.ns-1.svc.cluster.local",
+      "destination_workload": "bold-dream-v1",
+      "destination_workload_id": "bold-dream-v1.ns-1.ambient",
+      "destination_workload_namespace": "ns-1",
+      "namespace": "istio-system",
+      "pod_template_generation": "2",
+      "reporter": "destination",
+      "response_flags": "-",
+      "source_cluster": "ambient",
+      "source_principal": "spiffe://cluster.local/ns/ns-1/sa/broken-smoke",
+      "source_workload": "broken-smoke-v1",
+      "source_workload_namespace": "ns-1",
+      "workload_id": "broken-smoke-v1.ns-1.ambient"
+    },
+    "value": [
+      1742322681.411,
+      "309926"
+    ]
+  },
+  {
+    "metric": {
+      "__name__": "istio_tcp_sent_bytes_total",
+      "app": "gloo-telemetry-collector-agent",
+      "cluster": "ambient",
+      "collector_pod": "gloo-telemetry-collector-agent-g5hmp",
+      "component": "agent-collector",
+      "connection_security_policy": "mutual_tls",
+      "controller_revision_hash": "dbd589d5f",
+      "destination_cluster": "ambient",
+      "destination_principal": "spiffe://cluster.local/ns/ns-1/sa/bold-dream-v1",
+      "destination_service": "bold-dream-v1.ns-1.svc.cluster.local",
+      "destination_workload": "bold-dream-v1",
+      "destination_workload_id": "bold-dream-v1.ns-1.ambient",
+      "destination_workload_namespace": "ns-1",
+      "namespace": "istio-system",
+      "pod_template_generation": "2",
+      "reporter": "destination",
+      "response_flags": "-",
+      "source_cluster": "ambient",
+      "source_principal": "spiffe://cluster.local/ns/ns-1/sa/super-bold-dream-v1",
+      "source_workload": "super-bold-dream-v1",
+      "source_workload_namespace": "ns-1",
+      "workload_id": "broken-smoke-v1.ns-1.ambient"
+    },
+    "value": [
+      1742322681.411,
+      "309926"
+    ]
+  },
+  {
+    "metric": {
+      "__name__": "istio_tcp_sent_bytes_total",
+      "app": "gloo-telemetry-collector-agent",
+      "cluster": "ambient",
+      "collector_pod": "gloo-telemetry-collector-agent-g5hmp",
+      "component": "agent-collector",
+      "connection_security_policy": "mutual_tls",
+      "controller_revision_hash": "dbd589d5f",
+      "destination_cluster": "ambient",
+      "destination_principal": "spiffe://cluster.local/ns/ns-1/sa/super-bold-dream-v1",
+      "destination_service": "super-bold-dream-v1.ns-1.svc.cluster.local",
+      "destination_workload": "super-bold-dream-v1",
+      "destination_workload_id": "super-bold-dream-v1.ns-1.ambient",
+      "destination_workload_namespace": "ns-1",
+      "namespace": "istio-system",
+      "pod_template_generation": "2",
+      "reporter": "destination",
+      "response_flags": "-",
+      "source_cluster": "ambient",
+      "source_principal": "spiffe://cluster.local/ns/ns-1/sa/bold-dream-v1",
+      "source_workload": "bold-dream-v1",
+      "source_workload_namespace": "ns-1",
+      "workload_id": "broken-smoke-v1.ns-1.ambient"
+    },
+    "value": [
+      1742322681.411,
+      "309926"
+    ]
+  },
+  {
+    "metric": {
+      "__name__": "istio_tcp_sent_bytes_total",
+      "app": "gloo-telemetry-collector-agent",
+      "cluster": "ambient",
+      "collector_pod": "gloo-telemetry-collector-agent-g5hmp",
+      "component": "agent-collector",
+      "connection_security_policy": "mutual_tls",
+      "controller_revision_hash": "dbd589d5f",
+      "destination_cluster": "ambient",
+      "destination_principal": "spiffe://cluster.local/ns/ns-1/sa/crimson-sky-v2",
+      "destination_service": "crimson-sky-v2.ns-1.svc.cluster.local",
+      "destination_workload": "crimson-sky-v2",
+      "destination_workload_id": "crimson-sky-v2.ns-1.ambient",
+      "destination_workload_namespace": "ns-1",
+      "namespace": "istio-system",
+      "pod_template_generation": "2",
+      "reporter": "destination",
+      "response_flags": "-",
+      "source_cluster": "ambient",
+      "source_principal": "spiffe://cluster.local/ns/ns-1/sa/bold-dream-v1",
+      "source_workload": "bold-dream-v1",
+      "source_workload_namespace": "ns-1",
+      "workload_id": "broken-smoke-v1.ns-1.ambient"
+    },
+    "value": [
+      1742322681.411,
+      "309926"
+    ]
+  },
+  {
+    "metric": {
+      "__name__": "istio_tcp_sent_bytes_total",
+      "app": "gloo-telemetry-collector-agent",
+      "cluster": "ambient",
+      "collector_pod": "gloo-telemetry-collector-agent-g5hmp",
+      "component": "agent-collector",
+      "connection_security_policy": "mutual_tls",
+      "controller_revision_hash": "dbd589d5f",
+      "destination_cluster": "ambient",
+      "destination_principal": "spiffe://cluster.local/ns/ns-1/sa/bold-dream",
+      "destination_service": "bold-dream.ns-1.svc.cluster.local",
+      "destination_workload": "bold-dream-v1",
+      "destination_workload_id": "bold-dream-v1.ns-1.ambient",
+      "destination_workload_namespace": "ns-1",
+      "namespace": "istio-system",
+      "pod_template_generation": "2",
+      "reporter": "source",
+      "response_flags": "-",
+      "source_cluster": "ambient",
+      "source_principal": "spiffe://cluster.local/ns/ns-1/sa/broken-smoke",
+      "source_workload": "broken-smoke-v1",
+      "source_workload_namespace": "ns-1",
+      "workload_id": "broken-smoke-v1.ns-1.ambient"
+    },
+    "value": [
+      1742322681.411,
+      "309926"
+    ]
+  },
+  {
+    "metric": {
+      "__name__": "istio_tcp_sent_bytes_total",
+      "app": "gloo-telemetry-collector-agent",
+      "cluster": "ambient",
+      "collector_pod": "gloo-telemetry-collector-agent-g5hmp",
+      "component": "agent-collector",
+      "connection_security_policy": "mutual_tls",
+      "controller_revision_hash": "dbd589d5f",
+      "destination_cluster": "ambient",
+      "destination_principal": "spiffe://cluster.local/ns/ns-1/sa/broken-shadow",
+      "destination_service": "broken-shadow.ns-1.svc.cluster.local",
+      "destination_workload": "broken-shadow-v1",
+      "destination_workload_id": "broken-shadow-v1.ns-1.ambient",
+      "destination_workload_namespace": "ns-1",
+      "namespace": "istio-system",
+      "pod_template_generation": "2",
+      "reporter": "destination",
+      "response_flags": "-",
+      "source_cluster": "ambient",
+      "source_principal": "spiffe://cluster.local/ns/ns-1/sa/crimson-sky",
+      "source_workload": "crimson-sky-v1",
+      "source_workload_namespace": "ns-1",
+      "workload_id": "crimson-sky-v1.ns-1.ambient"
+    },
+    "value": [
+      1742322681.411,
+      "12803"
+    ]
+  },
+  {
+    "metric": {
+      "__name__": "istio_tcp_sent_bytes_total",
+      "app": "gloo-telemetry-collector-agent",
+      "cluster": "ambient",
+      "collector_pod": "gloo-telemetry-collector-agent-g5hmp",
+      "component": "agent-collector",
+      "connection_security_policy": "mutual_tls",
+      "controller_revision_hash": "dbd589d5f",
+      "destination_cluster": "ambient",
+      "destination_principal": "spiffe://cluster.local/ns/ns-1/sa/broken-shadow",
+      "destination_service": "broken-shadow.ns-1.svc.cluster.local",
+      "destination_workload": "broken-shadow-v1",
+      "destination_workload_id": "broken-shadow-v1.ns-1.ambient",
+      "destination_workload_namespace": "ns-1",
+      "namespace": "istio-system",
+      "pod_template_generation": "2",
+      "reporter": "destination",
+      "response_flags": "-",
+      "source_cluster": "ambient",
+      "source_principal": "spiffe://cluster.local/ns/ns-1/sa/crimson-sky",
+      "source_workload": "crimson-sky-v2",
+      "source_workload_namespace": "ns-1",
+      "workload_id": "crimson-sky-v2.ns-1.ambient"
+    },
+    "value": [
+      1742322681.411,
+      "14089"
+    ]
+  },
+  {
+    "metric": {
+      "__name__": "istio_tcp_sent_bytes_total",
+      "app": "gloo-telemetry-collector-agent",
+      "cluster": "ambient",
+      "collector_pod": "gloo-telemetry-collector-agent-g5hmp",
+      "component": "agent-collector",
+      "connection_security_policy": "mutual_tls",
+      "controller_revision_hash": "dbd589d5f",
+      "destination_cluster": "ambient",
+      "destination_principal": "spiffe://cluster.local/ns/ns-1/sa/broken-shadow",
+      "destination_service": "broken-shadow.ns-1.svc.cluster.local",
+      "destination_workload": "broken-shadow-v1",
+      "destination_workload_id": "broken-shadow-v1.ns-1.ambient",
+      "destination_workload_namespace": "ns-1",
+      "namespace": "istio-system",
+      "pod_template_generation": "2",
+      "reporter": "destination",
+      "response_flags": "-",
+      "source_cluster": "ambient",
+      "source_principal": "spiffe://cluster.local/ns/ns-1/sa/crimson-sky",
+      "source_workload": "crimson-sky-v3",
+      "source_workload_namespace": "ns-1",
+      "workload_id": "crimson-sky-v3.ns-1.ambient"
+    },
+    "value": [
+      1742322681.411,
+      "12375"
+    ]
+  },
+  {
+    "metric": {
+      "__name__": "istio_tcp_sent_bytes_total",
+      "app": "gloo-telemetry-collector-agent",
+      "cluster": "ambient",
+      "collector_pod": "gloo-telemetry-collector-agent-g5hmp",
+      "component": "agent-collector",
+      "connection_security_policy": "mutual_tls",
+      "controller_revision_hash": "dbd589d5f",
+      "destination_cluster": "ambient",
+      "destination_principal": "spiffe://cluster.local/ns/ns-1/sa/broken-shadow",
+      "destination_service": "broken-shadow.ns-1.svc.cluster.local",
+      "destination_workload": "broken-shadow-v1",
+      "destination_workload_id": "broken-shadow-v1.ns-1.ambient",
+      "destination_workload_namespace": "ns-1",
+      "namespace": "istio-system",
+      "pod_template_generation": "2",
+      "reporter": "source",
+      "response_flags": "-",
+      "source_cluster": "ambient",
+      "source_principal": "spiffe://cluster.local/ns/ns-1/sa/crimson-sky",
+      "source_workload": "crimson-sky-v1",
+      "source_workload_namespace": "ns-1",
+      "workload_id": "crimson-sky-v1.ns-1.ambient"
+    },
+    "value": [
+      1742322681.411,
+      "12803"
+    ]
+  }
+]
