@@ -65,91 +65,58 @@ jobs:
           zip -j mesh_helper_darwin_arm64.zip ./bin/darwin/arm64/mesh-helper
           zip -j mesh_helper_windows_amd64.zip ./bin/windows/mesh-helper.exe
 
-#      - name: Create Release
-#        id: create_release
-#        if: contains(github.ref, 'v')
-#        uses: actions/create-release@v1
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        with:
-#          tag_name: ${{ github.ref }}
-#          release_name: Release ${{ github.ref }}
-#          draft: false
-#          prerelease: false
-
       - name: Upload Release Asset Linux Amd64
         if: contains(github.ref, 'v')
-        uses: actions/upload-release-asset@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./mesh_helper_linux_amd64.zip
-          asset_name: mesh_helper_linux_amd64.zip
-          asset_content_type: application/zip
+          files: mesh_helper_linux_amd64.zip
 
       - name: Upload Release Asset Linux Arm6
         if: contains(github.ref, 'v')
-        uses: actions/upload-release-asset@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./mesh_helper_linux_arm6.zip
-          asset_name: mesh_helper_linux_arm6.zip
-          asset_content_type: application/zip
+          files: mesh_helper_linux_arm6.zip
 
       - name: Upload Release Asset Linux Arm7
         if: contains(github.ref, 'v')
-        uses: actions/upload-release-asset@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./mesh_helper_linux_arm7.zip
-          asset_name: mesh_helper_linux_arm7.zip
-          asset_content_type: application/zip
+          files: mesh_helper_linux_arm7.zip
       
       - name: Upload Release Asset Linux Arm64
         if: contains(github.ref, 'v')
-        uses: actions/upload-release-asset@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./mesh_helper_linux_arm64.zip
-          asset_name: mesh_helper_linux_arm64.zip
-          asset_content_type: application/zip
-      
+          files: mesh_helper_linux_arm64.zip
+
       - name: Upload Release Asset Darwin Amd64
         if: contains(github.ref, 'v')
-        uses: actions/upload-release-asset@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./mesh_helper_darwin_amd64.zip
-          asset_name: mesh_helper_darwin_amd64.zip
-          asset_content_type: application/zip
-      
+          files: mesh_helper_darwin_amd64.zip
+
       - name: Upload Release Asset Darwin Arm64
         if: contains(github.ref, 'v')
-        uses: actions/upload-release-asset@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./mesh_helper_darwin_arm64.zip
-          asset_name: mesh_helper_darwin_arm64.zip
-          asset_content_type: application/zip
+          files: mesh_helper_darwin_arm64.zip
 
       - name: Upload Release Asset Windows Amd64
         if: contains(github.ref, 'v')
-        uses: actions/upload-release-asset@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./mesh_helper_windows_amd64.zip
-          asset_name: mesh_helper_windows_amd64.zip
-          asset_content_type: application/zip
+          files: mesh_helper_windows_amd64.zip
