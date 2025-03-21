@@ -2,19 +2,10 @@
 
 set -eu
 
-if [ -x "$(command -v python3)" ]; then
-  alias any_python='python3'
-elif [ -x "$(command -v python)" ]; then
-  alias any_python='python'
-elif [ -x "$(command -v python2)" ]; then
-  alias any_python='python2'
-else
-  echo Python 2 or 3 is required to install mesh-helper
-  exit 1
-fi
-
 if [ -z "${APP_VERSION:-}" ]; then
-  APP_VERSIONS=$(curl -sH"Accept: application/vnd.github.v3+json" https://api.github.com/repos/nmnellis/mesh-helper/releases | any_python -c "import sys; from distutils.version import StrictVersion, LooseVersion; from json import loads as l; releases = l(sys.stdin.read()); releases = [release['tag_name'] for release in releases];  filtered_releases = list(filter(lambda release_string: len(release_string) > 0 and StrictVersion.version_re.match(release_string[1:]) != None, releases)); filtered_releases.sort(key=LooseVersion, reverse=True); print('\n'.join(filtered_releases))")
+  # `select(.tag_name | test("-") | not)` should filter out any prerelease versions which contain hyphens (eg. 1.19.0-beta1)
+  # `select(.tag_name | startswith("v1."))` will filter out any "v2". Though we might be able to get rid of this (see https://github.com/kgateway-dev/kgateway/pull/8856)
+  APP_VERSIONS=$(curl -sHL "Accept: application/vnd.github.v3+json" https://api.github.com/repos/nmnellis/mesh-helper/releases | jq -r '[.[] | select(.tag_name | test("-") | not) | select(.tag_name | startswith("v")) | .tag_name] | sort_by(.) | reverse | .[0]')
 else
   APP_VERSIONS="${APP_VERSION}"
 fi
@@ -25,14 +16,21 @@ else
   OS=linux
 fi
 
-for app_version in $APP_VERSIONS; do
+arch=$(uname -m)
+if [ "$arch" = "aarch64" ] || [ "$arch" = "arm64" ]; then
+  GOARCH=arm64
+else
+  GOARCH=amd64
+fi
 
-tmp=$(mktemp -d /tmp/mesh-helper.XXXXXX)
-filename="mesh_helper_${OS}_amd64"
-url="https://github.com/nmnellis/mesh-helper/releases/download/${app_version}/${filename}.zip"
+for version in $APP_VERSIONS; do
 
+tmp=$(mktemp -d /tmp/gloo.XXXXXX)
+filename="mesh_helper_${OS}_${GOARCH}"
+
+url="https://github.com/nmnellis/mesh-helper/releases/download/${version}/${filename}.zip"
 if curl -f ${url} >/dev/null 2>&1; then
-  echo "Attempting to download mesh-helper version ${app_version}"
+  echo "Attempting to download mesh-helper version ${version}"
 else
   continue
 fi
@@ -45,17 +43,9 @@ fi
   SHA=$(curl -sL "${url}.sha256" | cut -d' ' -f1)
   curl -sLO "${url}"
   echo "Download complete!"
-#  checksum=$(openssl dgst -sha256 "${filename}" | awk '{ print $2 }')
-#  if [ "$checksum" != "$SHA" ]; then
-#    echo "Checksum validation failed." >&2
-#    exit 1
-#  fi
-#  echo "Checksum valid."
-
 )
 
 (
-
   cd "$HOME"
   mkdir -p ".istio/bin"
   echo "extracting zip ${tmp}/${filename}"
@@ -68,11 +58,11 @@ rm -r "$tmp"
 
 echo "mesh-helper was successfully installed 🎉"
 echo ""
-echo "Add the mesh-helper CLI to your path with:"
+echo "Add the CLI to your path with:"
 echo "  export PATH=\$HOME/.istio/bin:\$PATH"
 echo ""
 echo "Now run:"
-echo "  mesh-helper -h
+echo "  $HOME/.istio/bin/mesh-helper -h"
 exit 0
 done
 
