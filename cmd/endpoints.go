@@ -183,7 +183,7 @@ func getEndpointInformation(pods map[string]*corev1.Pod, client kube.CLIClient) 
 	for namespacePodName, pod := range pods {
 		// find if istio-proxy container
 		if !containsProxyContainer(pod) {
-			fmt.Printf("%s is not a proxy container\n", namespacePodName)
+			fmt.Printf("%s does not have an istio-proxy container\n", namespacePodName)
 			continue
 		}
 		// kubectl exec to endpoint to get stats
@@ -270,7 +270,7 @@ func findPods(ctx context.Context, clientset *kubernetes.Clientset, args *Endpoi
 			pods[podNameNamespace(pod.Name, pod.Namespace)] = &pod
 		}
 	}
-	fmt.Println("found ", len(pods), "pods")
+	fmt.Println("found", len(pods), "pod(s)")
 	return pods, nil
 }
 
