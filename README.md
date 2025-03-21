@@ -147,6 +147,49 @@ spec:
       app: polished-surf-v1
 ```
 
+## Istio Sidecar Resources
+* Generate the equivalent SidecarResources in Istio to save memory
+
+```shell
+dependencies --file /tmp/full.json --output sidecar
+```
+
+```shell
+apiVersion: security.istio.io/v1beta1
+kind: Sidecar
+metadata:
+  name: late-meadow-v1
+  namespace: ns-1
+spec:
+  egress:
+  - hosts:
+    - '*/cold-sea-v1.ns-1.svc.cluster.local'
+    - '*/dark-tree-v1.ns-1.svc.cluster.local'
+    - '*/floral-fire-v1.ns-1.svc.cluster.local'
+    - '*/hidden-paper-v1.ns-1.svc.cluster.local'
+    - '*/purple-hill-v1.ns-1.svc.cluster.local'
+    - '*/withered-shadow-v1.ns-1.svc.cluster.local'
+  workloadSelector:
+    labels:
+      app: late-meadow-v1
+
+---
+apiVersion: security.istio.io/v1beta1
+kind: Sidecar
+metadata:
+  name: crimson-sky-v1
+  namespace: ns-1
+spec:
+  egress:
+  - hosts:
+    - '*/broken-shadow-v1.ns-1.svc.cluster.local'
+    - '*/frosty-water-v1.ns-1.svc.cluster.local'
+    - '*/polished-surf-v1.ns-1.svc.cluster.local'
+  workloadSelector:
+    labels:
+      app: crimson-sky-v1
+```
+
 ## Endpoint Discovery 
 
 Mesh helper can print a set of pods endpoint stats.
