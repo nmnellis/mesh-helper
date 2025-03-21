@@ -28,7 +28,13 @@ type HostStatus struct {
 	HealthStatus HealthStatus `json:"health_status"`
 	Weight       int          `json:"weight"`
 	Hostname     string       `json:"hostname,omitempty"`
-	Locality     struct{}     `json:"locality"`
+	Locality     Locality     `json:"locality"`
+}
+
+type Locality struct {
+	Region  string `json:"region"`
+	Zone    string `json:"zone"`
+	SubZone string `json:"sub_zone"`
 }
 
 type Threshold struct {

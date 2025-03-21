@@ -118,7 +118,7 @@ func printEndpointInfo(clusters map[string]*envoy.Clusters) error {
 	var noEndpointsPods []string
 	for namespacePodName, cluster := range clusters {
 
-		tbl := table.New("Cluster", "Endpoint", "Port", "Rq Success", "Rq Error", "Cx Active", "Cx Connect Fail", "Priority")
+		tbl := table.New("Cluster", "Endpoint", "Port", "Rq Success", "Rq Error", "Cx Active", "Cx Connect Fail", "Priority", "Locality")
 		tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
 		var rows = 0
 		for _, s := range cluster.ClusterStatuses {
@@ -144,7 +144,18 @@ func printEndpointInfo(clusters map[string]*envoy.Clusters) error {
 						}
 					}
 					if len(statsMap) > 0 {
-						tbl.AddRow(nameSplit[3], hs.Address.SocketAddress.Address, hs.Address.SocketAddress.PortValue, statsMap["rq_success"], statsMap["rq_error"], statsMap["cx_active"], statsMap["cx_connect_fail"], statsMap["priority"])
+						var locality string
+						if hs.Locality.Region != "" {
+							locality = hs.Locality.Region
+						}
+						if hs.Locality.Zone != "" {
+							locality += "/" + hs.Locality.Zone
+						}
+						if hs.Locality.SubZone != "" {
+							locality += "/" + hs.Locality.SubZone
+						}
+
+						tbl.AddRow(nameSplit[3], hs.Address.SocketAddress.Address, hs.Address.SocketAddress.PortValue, statsMap["rq_success"], statsMap["rq_error"], statsMap["cx_active"], statsMap["cx_connect_fail"], statsMap["priority"], locality)
 						rows++
 					}
 				}
@@ -175,7 +186,6 @@ func getEndpointInformation(pods map[string]*corev1.Pod, client kube.CLIClient) 
 			fmt.Printf("%s is not a proxy container\n", namespacePodName)
 			continue
 		}
-
 		// kubectl exec to endpoint to get stats
 		stats, err := getEndpointsFromPod(pod, client)
 		if err != nil {
@@ -186,6 +196,7 @@ func getEndpointInformation(pods map[string]*corev1.Pod, client kube.CLIClient) 
 		if err != nil {
 			fmt.Printf("Error getting endpoints from pod: %s %s\n", namespacePodName, err)
 		}
+
 		podEndpoints[namespacePodName] = clusters
 	}
 
