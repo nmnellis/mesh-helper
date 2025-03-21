@@ -11,9 +11,11 @@ import (
 	"github.com/prometheus/prometheus/util/teststorage"
 	"github.com/spf13/cobra"
 	"istio.io/api/meta/v1alpha1"
+	v2 "istio.io/api/networking/v1"
 	v1 "istio.io/api/security/v1"
 	securityv1beta1 "istio.io/api/security/v1beta1"
 	v1beta1api "istio.io/api/type/v1beta1"
+	networkingv1 "istio.io/client-go/pkg/apis/networking/v1"
 	"istio.io/client-go/pkg/apis/security/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -47,7 +49,7 @@ func dependenciesCmd() *cobra.Command {
 		},
 		SilenceUsage: true,
 	}
-	cmd.Flags().StringVarP(&depArgs.Output, "output", "o", "tree", "Output Format (tree, authz)")
+	cmd.Flags().StringVarP(&depArgs.Output, "output", "o", "tree", "Output Format (tree, authz, sidecar)")
 	cmd.Flags().StringVarP(&depArgs.File, "file", "f", "", "Read from a prometheus formatted input file")
 	cmd.Flags().StringVar(&depArgs.Name, "name", "", "Filter for workload by name")
 	cmd.Flags().StringVar(&depArgs.PromURL, "prom-url", "", "Call prometheus directly to fetch data")
@@ -96,13 +98,64 @@ func runDependencies(args *DependenciesArgs) error {
 		if err != nil {
 			return err
 		}
+	} else if args.Output == "sidecar" {
+		err = generateIstioSidecar(sourceToDestMap, fakeAPI, args.Namespace, args.Metric)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
+func generateIstioSidecar(destMap map[string][]*domain.Metadata, api *prom.FakeAPI, namespace string, metric string) error {
+	var policies []runtime.Object
+	for source, destinations := range destMap {
+		_, sourcesByName, err := queryAllWorkloads(api, namespace, source, metric)
+		if err != nil {
+			return err
+		}
+		var destinationWorkloads []string
+		for _, destination := range destinations {
+			destinationWorkloads = append(destinationWorkloads, fmt.Sprintf("*/%s.%s.svc.cluster.local", destination.Name, destination.Namespace))
+		}
+
+		sourceMetrics := sourcesByName[source][0]
+		policy := &networkingv1.Sidecar{
+			TypeMeta: metav1.TypeMeta{
+				Kind:       "Sidecar",
+				APIVersion: "security.istio.io/v1beta1",
+			},
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      source,
+				Namespace: string(sourceMetrics.Metric["source_workload_namespace"]),
+			},
+			Spec: v2.Sidecar{
+				Egress: []*v2.IstioEgressListener{
+					{
+						Hosts: destinationWorkloads,
+					},
+				},
+				WorkloadSelector: &v2.WorkloadSelector{
+					Labels: map[string]string{
+						"app": source,
+					},
+				},
+			},
+			Status: v1alpha1.IstioStatus{},
+		}
+		policies = append(policies, policy)
+	}
+
+	err := printIstioObjects(policies)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func generateIstioAuthZPolicies(destMap map[string][]*domain.Metadata, api *prom.FakeAPI, namespace string, metric string) error {
-	var policies []*v1beta1.AuthorizationPolicy
+	var policies []runtime.Object
 	for source, destinations := range destMap {
 		_, sourcesByName, err := queryAllWorkloads(api, namespace, source, metric)
 		if err != nil {
@@ -152,7 +205,7 @@ func generateIstioAuthZPolicies(destMap map[string][]*domain.Metadata, api *prom
 	return nil
 }
 
-func printIstioObjects(policies []*v1beta1.AuthorizationPolicy) error {
+func printIstioObjects(policies []runtime.Object) error {
 	scheme := runtime.NewScheme()
 	serializer := json.NewSerializerWithOptions(json.DefaultMetaFactory, scheme, scheme, json.SerializerOptions{Yaml: true, Pretty: true, Strict: true})
 
@@ -163,8 +216,9 @@ func printIstioObjects(policies []*v1beta1.AuthorizationPolicy) error {
 			fmt.Printf("Error encoding to YAML: %v\n", err)
 			return err
 		}
-
-		fmt.Println(strings.ReplaceAll(string(yamlData), "status: {}\n", ""))
+		output := strings.ReplaceAll(string(yamlData), "status: {}\n", "")
+		output = strings.ReplaceAll(output, "  creationTimestamp: null\n", "")
+		fmt.Println(output)
 		fmt.Println("---")
 	}
 	return nil

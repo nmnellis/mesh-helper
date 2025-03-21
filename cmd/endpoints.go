@@ -163,7 +163,7 @@ func printEndpointInfo(clusters map[string]*envoy.Clusters) error {
 			}
 		}
 		if rows > 0 {
-			fmt.Printf("%s\n--------------------------------------------------------------------------------------------\n", namespacePodName)
+			fmt.Printf("%s\n", namespacePodName)
 			tbl.Print()
 			fmt.Println("\n")
 		} else {
