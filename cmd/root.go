@@ -8,13 +8,12 @@ import (
 )
 
 type GlobalFlags struct {
-	KubeContext string
-	Namespace   string
+	KubeContext    string
+	KubeConfigPath string
 }
 
 func (g *GlobalFlags) AddToFlags(flags *pflag.FlagSet) {
-	flags.StringVar(&g.KubeContext, "context", "", "Kubernetes context for the cluster to run the command in.")
-	flags.StringVarP(&g.Namespace, "namespace", "n", "", "Namespace to run the command in.")
+	flags.StringVar(&g.KubeContext, "context", "", "Kubernetes context for the cluster to runDependencies the command in.")
 }
 
 func RootCommand(ctx context.Context) *cobra.Command {
@@ -32,7 +31,8 @@ func RootCommand(ctx context.Context) *cobra.Command {
 	globalFlags.AddToFlags(cmd.PersistentFlags())
 
 	cmd.AddCommand(
-		dependenciesCmd(ctx, globalFlags),
+		dependenciesCmd(),
+		endpointsCmd(ctx, globalFlags),
 	)
 
 	return cmd

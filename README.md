@@ -146,3 +146,68 @@ spec:
     matchLabels:
       app: polished-surf-v1
 ```
+
+## Endpoint Discovery 
+
+Mesh helper can print a set of pods endpoint stats.
+
+* For an entire namespace `mesh-helper endpoints --namespace default`
+```shell
+>mesh-helper endpoints --namespace default
+
+found 6 pod(s)
+default/details-v1-649d7678b5-8w79b does not have an istio-proxy container
+default/reviews-v2-65c9797659-xvkgz
+--------------------------------------------------------------------------------------------
+Cluster                            Endpoint    Port  Rq Success  Rq Error  Cx Active  Cx Connect Fail  Priority  Locality           
+ratings.default.svc.cluster.local  10.42.0.33  9080  132                   2                                     us-east/us-east-c  
+
+
+default/productpage-v1-5c5fb9b4b4-f47bg
+--------------------------------------------------------------------------------------------
+Cluster                            Endpoint    Port  Rq Success  Rq Error  Cx Active  Cx Connect Fail  Priority  Locality           
+reviews.default.svc.cluster.local  10.42.0.32  9080  132                                                         us-east/us-east-c  
+reviews.default.svc.cluster.local  10.42.0.34  9080  132                                                         us-east/us-east-c  
+reviews.default.svc.cluster.local  10.42.0.35  9080  133                                                         us-east/us-east-c  
+details.default.svc.cluster.local  10.42.0.38  9080  133                   2                                     us-east/us-east-c  
+
+
+default/reviews-v3-84b8cc6647-29lgg
+--------------------------------------------------------------------------------------------
+Cluster                            Endpoint    Port  Rq Success  Rq Error  Cx Active  Cx Connect Fail  Priority  Locality           
+ratings.default.svc.cluster.local  10.42.0.33  9080  133                   2                                     us-east/us-east-c  
+
+No outbound active endpoints found for default/reviews-v1-7f9f5df695-w6zc2
+No outbound active endpoints found for default/ratings-v1-794db9df8f-xgkhl
+```
+
+* For only a single deployment `mesh-helper endpoints --namespace default --deployment-name productpage-v1`
+
+```shell
+>mesh-helper endpoints --namespace default --deployment-name productpage-v1
+
+found 1 pod(s)
+default/productpage-v1-5c5fb9b4b4-f47bg
+--------------------------------------------------------------------------------------------
+Cluster                            Endpoint    Port  Rq Success  Rq Error  Cx Active  Cx Connect Fail  Priority  Locality           
+reviews.default.svc.cluster.local  10.42.0.32  9080  147                                                         us-east/us-east-c  
+reviews.default.svc.cluster.local  10.42.0.34  9080  146                                                         us-east/us-east-c  
+reviews.default.svc.cluster.local  10.42.0.35  9080  146                                                         us-east/us-east-c  
+details.default.svc.cluster.local  10.42.0.38  9080  175                   2                                     us-east/us-east-c  
+```
+
+* For a single pod `mesh-helper endpoints --namespace default --pod-name productpage-v1-5c5fb9b4b4-f47bg`
+
+```
+>mesh-helper endpoints --namespace default --pod-name productpage-v1-5c5fb9b4b4-f47bg
+
+found 1 pod(s)
+default/productpage-v1-5c5fb9b4b4-f47bg
+--------------------------------------------------------------------------------------------
+Cluster                            Endpoint    Port  Rq Success  Rq Error  Cx Active  Cx Connect Fail  Priority  Locality           
+reviews.default.svc.cluster.local  10.42.0.32  9080  164                                                         us-east/us-east-c  
+reviews.default.svc.cluster.local  10.42.0.34  9080  163                                                         us-east/us-east-c  
+reviews.default.svc.cluster.local  10.42.0.35  9080  164                                                         us-east/us-east-c  
+details.default.svc.cluster.local  10.42.0.38  9080  227                   2                                     us-east/us-east-c  
+
+```

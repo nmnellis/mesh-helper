@@ -1,13 +1,9 @@
 package cmd
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"fmt"
-	"github.com/ghodss/yaml"
-	"github.com/gogo/protobuf/jsonpb"
-	"github.com/gogo/protobuf/proto"
 	"github.com/nmnellis/mesh-helper/internal/domain"
 	"github.com/nmnellis/mesh-helper/internal/prom"
 	"github.com/prometheus/common/model"
@@ -26,71 +22,54 @@ import (
 	"time"
 )
 
-var (
-	Name    string
-	File    string
-	Output  string
-	PromURL string
-	Audit   bool
-	Metric  string
-)
+type DependenciesArgs struct {
+	Name      string
+	File      string
+	Output    string
+	PromURL   string
+	Audit     bool
+	Metric    string
+	Namespace string
+}
 
-func dependenciesCmd(ctx context.Context, globalFlags *GlobalFlags) *cobra.Command {
+func dependenciesCmd() *cobra.Command {
+	depArgs := &DependenciesArgs{}
 	cmd := &cobra.Command{
 		Use:     "dependencies",
 		Aliases: []string{"dep"},
 		Short:   "List application dependencies",
 		Long:    ` `,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return run(globalFlags)
+			return runDependencies(depArgs)
 		},
 		CompletionOptions: cobra.CompletionOptions{
 			DisableDefaultCmd: true,
 		},
 		SilenceUsage: true,
 	}
-	// set global CLI flags
-	globalFlags.AddToFlags(cmd.PersistentFlags())
-	cmd.Flags().StringVarP(&Output, "output", "o", "tree", "Output Format (tree, authz)")
-	cmd.Flags().StringVarP(&File, "file", "f", "", "Read from a prometheus formatted input file")
-	cmd.Flags().StringVar(&Name, "name", "", "Filter for workload by name")
-	cmd.Flags().StringVar(&PromURL, "prom-url", "", "Call prometheus directly to fetch data")
-	cmd.Flags().BoolVar(&Audit, "audit", true, "Audit traffic rather than deny")
-	cmd.Flags().StringVar(&Metric, "metric", "istio_tcp_sent_bytes_total", "Metric to grab dependency tree (istio_tcp_sent_bytes_total, istio_requests_total)")
-
+	cmd.Flags().StringVarP(&depArgs.Output, "output", "o", "tree", "Output Format (tree, authz)")
+	cmd.Flags().StringVarP(&depArgs.File, "file", "f", "", "Read from a prometheus formatted input file")
+	cmd.Flags().StringVar(&depArgs.Name, "name", "", "Filter for workload by name")
+	cmd.Flags().StringVar(&depArgs.PromURL, "prom-url", "", "Call prometheus directly to fetch data")
+	cmd.Flags().BoolVar(&depArgs.Audit, "audit", true, "Audit traffic rather than deny")
+	cmd.Flags().StringVar(&depArgs.Metric, "metric", "istio_tcp_sent_bytes_total", "Metric to grab dependency tree (istio_tcp_sent_bytes_total, istio_requests_total)")
+	cmd.Flags().StringVarP(&depArgs.Namespace, "namespace", "n", "", "Namespace to runDependencies the command in.")
 	return cmd
 }
 
-type YamlMarshaller struct{}
-
-func (YamlMarshaller) ToYaml(resource interface{}) ([]byte, error) {
-	switch typedResource := resource.(type) {
-	case nil:
-		return []byte{}, nil
-	case proto.Message:
-		buf := &bytes.Buffer{}
-		if err := (&jsonpb.Marshaler{OrigName: true}).Marshal(buf, typedResource); err != nil {
-			return nil, err
-		}
-		return yaml.JSONToYAML(buf.Bytes())
-	default:
-		return yaml.Marshal(resource)
-	}
-}
-
-func run(globalFlags *GlobalFlags) error {
+func runDependencies(args *DependenciesArgs) error {
 
 	var storage *teststorage.TestStorage
 	var err error
 
-	if File != "" {
-		storage, err = prom.LoadStorageFromFile(File)
+	if args.File != "" {
+		storage, err = prom.LoadStorageFromFile(args.File)
 		if err != nil {
 			return err
 		}
 
-	} else if PromURL != "" {
-		storage, err = prom.LoadStorageFromEndpoint(PromURL, Metric)
+	} else if args.PromURL != "" {
+		storage, err = prom.LoadStorageFromEndpoint(args.PromURL, args.Metric)
 	} else {
 		return errors.New("please specify --file or --name")
 	}
@@ -102,18 +81,18 @@ func run(globalFlags *GlobalFlags) error {
 
 	fakeAPI := &prom.FakeAPI{Storage: storage, Engine: engine}
 
-	sourceToDestMap, err := mapSourcesToDestinations(fakeAPI, globalFlags.Namespace, Name, Metric)
+	sourceToDestMap, err := mapSourcesToDestinations(fakeAPI, args.Namespace, args.Name, args.Metric)
 	if err != nil {
 		return err
 	}
 
-	if Output == "tree" {
-		err = generateAndPrintTree(globalFlags, fakeAPI, sourceToDestMap)
+	if args.Output == "tree" {
+		err = generateAndPrintTree(fakeAPI, sourceToDestMap, args)
 		if err != nil {
 			return err
 		}
-	} else if Output == "authz" {
-		err = generateIstioAuthZPolicies(sourceToDestMap, fakeAPI, globalFlags.Namespace, Metric)
+	} else if args.Output == "authz" {
+		err = generateIstioAuthZPolicies(sourceToDestMap, fakeAPI, args.Namespace, args.Metric)
 		if err != nil {
 			return err
 		}
@@ -165,13 +144,6 @@ func generateIstioAuthZPolicies(destMap map[string][]*domain.Metadata, api *prom
 		policies = append(policies, policy)
 	}
 
-	//marshaller := YamlMarshaller{}
-	//yaml, err := marshaller.ToYaml(&policies)
-	//if err != nil {
-	//	return err
-	//}
-	//fmt.Println(string(yaml))
-
 	err := printIstioObjects(policies)
 	if err != nil {
 		return err
@@ -198,8 +170,8 @@ func printIstioObjects(policies []*v1beta1.AuthorizationPolicy) error {
 	return nil
 }
 
-func generateAndPrintTree(globalFlags *GlobalFlags, fakeAPI *prom.FakeAPI, sourceToDestMap map[string][]*domain.Metadata) error {
-	rootWorkloads, err := findRootWorkloads(fakeAPI, globalFlags.Namespace, Name, Metric)
+func generateAndPrintTree(fakeAPI *prom.FakeAPI, sourceToDestMap map[string][]*domain.Metadata, args *DependenciesArgs) error {
+	rootWorkloads, err := findRootWorkloads(fakeAPI, args.Namespace, args.Name, args.Metric)
 	if err != nil {
 		return err
 	}
